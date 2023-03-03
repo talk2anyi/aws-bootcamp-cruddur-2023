@@ -1,9 +1,10 @@
 # Week 1 — App Containerization
 
 ## Required Homework Challenges
-### Containerize the Application using Dockerfiles & Docker Compose
 
-### Containerize Backend 
+## Containerize the Application using Dockerfiles & Docker Compose
+
+## Containerize Backend 
 
 
 ### Add Dockerfile
@@ -172,6 +173,141 @@ networks:
     driver: bridge
     name: cruddur
 ```
+
+
+## Document the Notification Endpoint for the OpenAI Document
+
+Go to: `backend-flask/openapi-3.0.yml`
+
+Create an endpoint for notifications tab by adding a new path
+
+```py
+  /api/activities/notifications:
+    get:
+      description: 'Return a feed of activity for all those that I follow'
+      tags:
+        - activities 
+      parameters: []
+      responses:
+        '200':
+          description: Returns an array of activities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Activity'
+```
+
+
+## Write a Flask Backend Endpoint for Notifications
+
+Go to: `backend-flask/app.py`
+
+Import the notifications service into `app.py`
+
+```py
+from services.notifications_activities import *
+```
+
+Create a route for the notification activities
+
+```py
+@app.route("/api/activities/notifications", methods=['GET'])
+def data_notifications():
+  data = NotificationsActivities.run()
+  return data, 200
+```
+
+Go to: `backend-flask/services` and create file `notifications_activities.py`
+
+Paste this code in to create the notifications service
+
+```py
+from datetime import datetime, timedelta, timezone
+class NotificationsActivities:
+  def run():
+    now = datetime.now(timezone.utc).astimezone()
+    results = [{
+      'uuid': '68f126b0-1ceb-4a33-88be-d90fa7109eee',
+      'handle':  'Shellback',
+      'message': 'Forward operating team!',
+      'created_at': (now - timedelta(days=2)).isoformat(),
+      'expires_at': (now + timedelta(days=5)).isoformat(),
+      'likes_count': 5,
+      'replies_count': 1,
+      'reposts_count': 0,
+      'replies': [{
+        'uuid': '26e12864-1c26-5c3a-9658-97a10f8fea67',
+        'reply_to_activity_uuid': '68f126b0-1ceb-4a33-88be-d90fa7109eee',
+        'handle':  'Worf',
+        'message': 'This post has no honor!',
+        'likes_count': 0,
+        'replies_count': 0,
+        'reposts_count': 0,
+        'created_at': (now - timedelta(days=2)).isoformat()
+      }],
+    }
+    ]
+    return results
+```
+
+
+
+## Write a React Page for Notifications
+
+Go to: `frontend-react-js/src/App.js`
+
+Create an entrypoint for the notofications service
+
+```js
+import NotificationsFeedPage from './pages/NotificationsFeedPage';
+```
+
+Create a route path for the notifications service in the frontend
+
+```js
+  {
+    path: "/notifications",
+    element: <NotificationsFeedPage />
+  },
+```  
+
+Go to: `frontend-react-js/src/pages`  
+
+Create files: `NotificationsFeedPage.css` and `NotificationsFeedPage.js`
+
+Copy the contents of `HomeFeedPage.js` to `NotificationsFeedPage.js` and edit the code replacing all instances of `home` with `notifications`
+
+Do the same thing for `NotificationsFeedPage.css` file using `HomeFeedPage.css`
+
+
+## Errors 
+
+If your backend throws an error like the notificatiions data not visible,
+
+Go to: `backend-flask/services/show_activity.py`
+
+Change the class definition for `ShowActivities` 
+
+From `def run(activity_uuid=activity_uuid):` to `def run(activity_uuid):` 
+
+If your frontend throws an error like "no route found"
+
+Check your  `App.js` file and correct the route for notifications.
+
+
+
+## Run DynamoDB Local Container and ensure it works
+
+
+
+## Run Postgres Container and ensure it works
+
+
+
+
+
 
 ## Adding DynamoDB Local and Postgres
 
