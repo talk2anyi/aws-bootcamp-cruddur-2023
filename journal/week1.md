@@ -1,6 +1,68 @@
 # Week 1 — App Containerization
 
-## Required Homework Challenges
+## Homework Challenges 
+
+### Push and tag an image to DockerHub (they have a free tier)
+
+I pushed and tagged both the frontend-react-js and backend-flask images to dockerhub
+
+![pushing an image to dockerhub](assets/docker-push.png)
+
+
+### Learn how to install Docker on your local machine and get the same containers running outside of Gitpod / Codespaces
+
+I created a script to install docker on my machine
+```sh
+#!/bin/bash
+sudo apt-get update -y
+sudo apt-get install \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release -y
+
+sudo mkdir -m 0755 -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/doc>
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.do>
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+sudo apt-get update
+
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+echo 'Docker installed'
+
+# Add current user to the docker group (to avoid needing to use 'sudo' for Docker commands)
+sudo usermod -aG docker $USER
+
+# Verify installation
+docker --version
+```
+I ran the script using `sh <scriptName.sh>` 
+
+I built the images for the frontend and backend application `docker build -t <repositoryName/imageName:tag>`
+
+I started and ran the containers for the application locally `docker run -d -p` commands 
+
+![Running containers locally](assets/run-containers.png)
+
+
+
+### Launch an EC2 instance that has docker installed, and pull a container to demonstrate you can run your own docker processes. 
+
+I launched an EC2 instance and pulled an image from the docker registry
+
+![Pulling container from dockerhub](assets/docker-pull.png)
+
+
+
+
+
+## Required Homework Tasks
 
 ## Containerize the Application using Dockerfiles & Docker Compose
 
